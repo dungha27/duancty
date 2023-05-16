@@ -11,7 +11,6 @@ import {
 } from '@coreui/react'
 import {
   cilBell,
-  cilCreditCard,
   cilCommentSquare,
   cilEnvelopeOpen,
   cilFile,
@@ -70,13 +69,6 @@ const AppHeaderDropdown = () => {
           Settings
         </CDropdownItem>
         <CDropdownItem href="#">
-          <CIcon icon={cilCreditCard} className="me-2" />
-          Payments
-          <CBadge color="secondary" className="ms-2">
-            42
-          </CBadge>
-        </CDropdownItem>
-        <CDropdownItem href="#">
           <CIcon icon={cilFile} className="me-2" />
           Projects
           <CBadge color="primary" className="ms-2">
@@ -86,7 +78,7 @@ const AppHeaderDropdown = () => {
         <CDropdownDivider />
         <CDropdownItem href="#">
           <CIcon icon={cilLockLocked} className="me-2" />
-          Lock Account
+          Logout Account
         </CDropdownItem>
       </CDropdownMenu>
     </CDropdown>
