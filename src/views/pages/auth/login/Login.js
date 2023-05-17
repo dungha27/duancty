@@ -4,9 +4,10 @@ import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer } from 'react-toastify'
 import React from 'react'
 import { Image } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
-import { PostData } from '../../../api'
+import { Link, redirect } from 'react-router-dom'
+import { PostData } from '../../../../api'
 const Login = () => {
+
   const initialValues = {
     username: '',
     password: '',
@@ -14,14 +15,14 @@ const Login = () => {
   const validate = (values) => {
     const errors = {}
     if (!values.username) {
-      errors.username = 'Required'
+      errors.username = 'Please enter username!'
     } else if (values.username.length < 5) {
-      errors.username = 'Must be 5 characters or more'
+      errors.username = 'Must be 5 characters or more!'
     }
     if (!values.password) {
-      errors.password = 'Required'
+      errors.password = 'Please enter password!'
     } else if (values.password.length < 8) {
-      errors.password = 'Must be 8 characters or more'
+      errors.password = 'Must be 8 characters or more!'
     }
     return errors
   }
@@ -35,14 +36,18 @@ const Login = () => {
           toast.success(res.data.message)
           console.log(res.data)
         }
+
       })
       .catch((err) => {
         toast.error(err.response.data.message)
       })
-    setTimeout(() => {
-      setSubmitting(false)
-    }, 400)
-  }
+
+      setTimeout(() => {
+        setSubmitting(false)
+      }, 400)
+    }
+    
+
 
   return (
     <section className="vh-100 d-flex ">
@@ -108,7 +113,7 @@ const Login = () => {
                     type="submit"
                     className="btn btn-primary btn-lg"
                     style={{ padding: '11px 28px' }}
-                  >
+                    >
                     Login
                   </button>
                 </div>
