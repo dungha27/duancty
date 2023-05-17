@@ -15,7 +15,7 @@ import {
 } from '@coreui/react'
 import deleteIcon from '../../../assets/images/icon/deleteIcon.svg'
 import editIcon from '../../../assets/images/icon/editIcon.svg'
-
+import { Link } from 'react-router-dom'
 export default function Products() {
   return (
     <div>
@@ -31,7 +31,7 @@ export default function Products() {
             </CForm>
           </CContainer>
         </CNavbar>
-        <CButton color="primary">Thêm mới</CButton>
+<CButton><Link to="/admin/Add" className="text-light text-decoration-none">Thêm Mới</Link></CButton>
       </div>
       <CTable hover>
         <CTableHead>
@@ -53,7 +53,7 @@ export default function Products() {
             <CTableDataCell>@mdo</CTableDataCell>
             <CTableDataCell>
               <div className={'Neki-Table__Handle'}>
-                <img src={editIcon} alt={'edit'} />
+                <img src={editIcon} alt={'edit'}/>
                 <img src={deleteIcon} alt={'delete'} />
               </div>
             </CTableDataCell>
