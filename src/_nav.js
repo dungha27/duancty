@@ -39,8 +39,8 @@ const _nav = [
   },
   {
     component: CNavItem,
-    name: 'Sản phẩm',
-    to: '/admin/products',
+    name: 'Sinh Viên',
+    to: '/admin/products/',
     icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
   },
   {

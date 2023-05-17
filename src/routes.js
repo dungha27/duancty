@@ -17,12 +17,14 @@ const Range = React.lazy(() => import('./views/forms/range/Range'))
 const Select = React.lazy(() => import('./views/forms/select/Select'))
 const Validation = React.lazy(() => import('./views/forms/validation/Validation'))
 // Notifications
-const Product = React.lazy(() => import('./views/pages/products'))
+const Product = React.lazy(() => import('./views/pages/sinh_vien'))
+const Add = React.lazy(() => import('./views/pages/sinh_vien/Add/Add'))
 
 const routes = [
   { path: '/', exact: true, name: 'Trang chủ' },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
-  { path: '/products', name: 'Sản phẩm', element: Product, exact: true },
+  { path: '/products', name: 'Sinh Viên', element: Product, exact: true },
+  { path: '/Add', name: 'Thêm Sinh Viên', element: Add, exact: true },
   { path: '/buttons', name: 'Buttons', element: Buttons, exact: true },
   { path: '/buttons/buttons', name: 'Buttons', element: Buttons },
   { path: '/buttons/dropdowns', name: 'Dropdowns', element: Dropdowns },
