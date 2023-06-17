@@ -1,16 +1,15 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import { toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-import { ToastContainer } from 'react-toastify'
 import React from 'react'
 import { Image } from 'react-bootstrap'
-import { Link, redirect } from 'react-router-dom'
+import { Link, Navigate, redirect, useNavigate } from 'react-router-dom'
 import { PostData } from '../../../../api'
 const Login = () => {
+  const Navigate = useNavigate();
 
   const initialValues = {
-    username: '',
-    password: '',
+    username: 'admin',
+    password: 'admin@123',
   }
   const validate = (values) => {
     const errors = {}
@@ -25,30 +24,28 @@ const Login = () => {
       errors.password = 'Must be 8 characters or more!'
     }
     return errors
+    
   }
   const onSubmit = async (values, { setSubmitting }) => {
-    const result = PostData('login', values)
+    const result = PostData('/auth/login', values)
     console.log(result)
     result
       .then((res) => {
         console.log(res)
-        if (res.status === 200) {
-          toast.success(res.data.message)
-          console.log(res.data)
+        if (res.status === 200 && res.data) {
+          toast.success("Login Sucess")
+          localStorage.setItem('accessToken', res?.data?.accessToken)
+          Navigate('/admin/dashboard')
         }
-
       })
       .catch((err) => {
-        toast.error(err.response.data.message)
+        toast.error(err)
       })
 
-      setTimeout(() => {
-        setSubmitting(false)
-      }, 400)
-    }
-    
-
-
+    setTimeout(() => {
+      setSubmitting(false)
+    }, 400)
+  }
   return (
     <section className="vh-100 d-flex ">
       <div className="container-fluid h-custom">
@@ -61,7 +58,6 @@ const Login = () => {
             />
           </div>
           <div className="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-            <ToastContainer />
             <Formik initialValues={initialValues} validate={validate} onSubmit={onSubmit}>
               <Form>
                 <div className="form-outline mb-4">
@@ -113,7 +109,7 @@ const Login = () => {
                     type="submit"
                     className="btn btn-primary btn-lg"
                     style={{ padding: '11px 28px' }}
-                    >
+                  >
                     Login
                   </button>
                 </div>

@@ -1,6 +1,8 @@
 import React, { Component, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './scss/style.scss'
+import 'react-toastify/dist/ReactToastify.css'
+import { ToastContainer } from 'react-toastify'
 
 const loading = (
   <div className="pt-3 text-center">
@@ -32,6 +34,7 @@ class App extends Component {
             <Route exact path="/admin/*" name="Admin home" element={<DefaultLayout />} />
           </Routes>
         </Suspense>
+        <ToastContainer />
       </BrowserRouter>
     )
   }
