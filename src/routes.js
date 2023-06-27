@@ -17,6 +17,10 @@ const Edit_duan = React.lazy(() => import('./views/pages/project/Edit_duan/Edit_
 const partner = React.lazy(() => import('./views/pages/partner/index'))
 const Add_dt = React.lazy(() => import('./views/pages/partner/Add/Add_dt'))
 const Edit_dt = React.lazy(() => import('./views/pages/partner/Edit/Edit_dt'))
+//ngay lam viec
+const working = React.lazy(() => import('./views/pages/working/index'))
+const Add_working = React.lazy(() => import('./views/pages/working/Add_working/Add_working'))
+
 const routes = [
   { path: '/', exact: true, name: 'Trang chủ' },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
@@ -26,11 +30,14 @@ const routes = [
 
   { path: '/Project', name: 'Dự Án', element: Project, exact: true },
   { path: '/Add_duan', name: 'Thêm Dự Án', element: Add_duan, exact: true },
-  { path: '/Edit_duan:id', name: 'Sửa Dự Án', element: Edit_duan, exact: true },
+  { path: '/Edit_duan/:id', name: 'Sửa Dự Án', element: Edit_duan, exact: true },
   
   { path: '/partner', name: 'Đối tác', element: partner, exact: true },
   { path: '/Add_dt', name: 'Thêm Đối Tác', element: Add_dt, exact: true },
-  { path: '/Edit_dt', name: 'Sửa Đối Tác', element: Edit_dt, exact: true },
+  { path: '/Edit_dt/:id', name: 'Sửa Đối Tác', element: Edit_dt, exact: true },
+
+  { path: '/Working', name: 'Ngày làm việc', element: working, exact: true },
+  { path: '/Add_working', name: 'Thêm', element: Add_working, exact: true },
 ]
 
-export default routes
+export default routes;

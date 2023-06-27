@@ -8,7 +8,9 @@ import {
   cilSpeedometer,
   cilStar,
   cilPeople,
-  cilUserPlus
+  cilUserPlus,
+  cilCalendar
+
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
@@ -39,12 +41,18 @@ const _nav = [
     to: '/admin/Project',
     icon: <CIcon icon={cilNotes} customClassName="nav-icon" />,
   },
-  // {
-  //   component: CNavItem,
-  //   name: 'Đối Tác',
-  //   to: '/admin/partner',
-  //   icon: <CIcon icon={cilUserPlus} customClassName="nav-icon" />,
-  // },
+  {
+    component: CNavItem,
+    name: 'Partner',
+    to: '/admin/partner',
+    icon: <CIcon icon={cilUserPlus} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Working',
+    to: '/admin/Working',
+    icon: <CIcon icon={cilCalendar} customClassName="nav-icon" />,
+  },
   {
     component: CNavTitle,
     name: 'Extras',

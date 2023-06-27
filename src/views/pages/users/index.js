@@ -1,46 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Space, Table, Button, Popconfirm, Input, message, Form } from "antd";
+import { Space, Table, Button, Popconfirm, Input, message, Form, Select, DatePicker } from "antd";
 import { GetData } from '../../../api';
 import { PAGE_DEFAULT } from '../../../constants';
 import { DeleteTwoTone, EditTwoTone, FileAddTwoTone, PlusCircleTwoTone } from '@ant-design/icons';
 import { Link } from "react-router-dom";
 import moment from 'moment';
 import { DeleteData } from '../../../api';
-import { AudioOutlined } from '@ant-design/icons';
+// import { AudioOutlined } from '@ant-design/icons';
 
 
 const products = () => {
-  useEffect(() => {
-    // Gọi API để lấy dữ liệu  
-    GetData(`/users?roleId&page=0&size`)
-      .then(response => {
-        setData(response.data);
-        // Áp dụng logic filter ban đầu cho dữ liệu trả về từ API
-        setFilteredData(response.data.filter(item => item.condition === true));
-      })
-      .catch(error => {
-        console.error('Lỗi khi gọi API:', error);
-      });
-  }, []);
-
-  //search
+  const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-  const [searchValue, setSearchValue] = useState('');
-  const [searchPhone, setSearchPhone] = useState('');
+  // const [searchCreatedAt, setSearchCreatedAt] = useState("");
+  // const [searchDob, setSearchDob] = useState("");
+  const [searchPhone, setSearchPhone] = useState("");
 
-  const handleSearch = (event) => {
-    event.preventDefault();
-    // Áp dụng logic tìm kiếm
-    const filtered = data.filter(item =>
-      item.fullname.toLowerCase().includes(searchValue.toLowerCase()) ||
-      item.dob.includes(searchValue)
-      //phone
-      // item.phone_number.toLowerCase().includes(searchPhone.toLowerCase()) ||
-      // item.phone_number.includes(setSearchPhone)
-
-    );
-    setFilteredData(filtered);
-  };
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(false);
   const { pageIndex, pageSize } = PAGE_DEFAULT
@@ -48,18 +23,37 @@ const products = () => {
     pageIndex: pageIndex,
     pageSize: pageSize
   });
-  //list users
 
+  const handleSearch = (e) => {
+    e.preventDefault(); // Prevent page reload
+    fetchData();
+  };
+
+  useEffect(() => {
+    // Gọi API để lấy dữ liệu  
+    GetData(`/users?roleId&page=0&size`)
+      .then(response => {
+        setData(response.data);
+        // Áp dụng logic filter ban đầu cho dữ liệu trả về từ API
+        setFilteredData(response.data);
+      })
+      .catch(error => {
+        console.error('Lỗi khi gọi API:', error);
+      });
+  }, []);
+
+
+  //list users
   useEffect(() => {
     fetchData();
   }, []);
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await GetData(`/users?page=${pageIndex}&size=${pageSize}?search`);
+      const response = await GetData(`/users?page=${pageIndex}&size=${pageSize}&search=${searchQuery}&phone=${searchPhone}`);
       setData(response.data);
       setFilteredData(response.data);
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
       setLoading(false);
       console.error('Error fetching data:', error);
@@ -71,10 +65,10 @@ const products = () => {
     try {
       const response = await DeleteData(`/users/${values}`);
       if (response.status === 200) {
-        message.success("Xóa thành công");
+        console.log("Xóa thành công");
         fetchData();
       } else {
-        message.error('Xóa không thành công');
+        console.log('Xóa không thành công');
       }
     } catch (error) {
       console.error('Error deleting data:', error);
@@ -148,6 +142,8 @@ const products = () => {
             onConfirm={() => onHandleDelete(record.id)}
             okText="Yes"
             cancelText="No"
+            okButtonProps={{ className: "text-light bg-primary" }}
+
           >
             <DeleteTwoTone style={{ fontSize: '18px' }} />              </Popconfirm>
         </Space>
@@ -162,68 +158,75 @@ const products = () => {
 
   return (
     <div>
-      <form className="col-span-3 md:col-span-2 bg-gray-100" onSubmit={handleSearch}>
-        <div className="grid grid-cols-3 grid-rows-2 gap-4">
-          <div className="p-1">Fullname:
-            <input
-              className="w-full border border-gray-300 rounded-md px-4 py-2"
-              type="text"
-              placeholder="Fullname"
-              value={searchValue}
-              onChange={e => setSearchValue(e.target.value)}
-            />
+      <form className="col-span-3 md:col-span-4 bg-gray-50" onSubmit={handleSearch}>
+        <div className="flex justify-center">
+          <div className="flex items-center space-x-4">
+            <div className="p-1">
+              Fullname:
+              <Input
+                className="w-full border border-gray-300 rounded-md px-4 py-2"
+                type="text"
+                placeholder="Fullname"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onSearch={() => fetchData()}
+              />
+            </div>
+            {/* <div className="p-1">
+        Role:
+        <input
+          className="w-full border border-gray-300 rounded-md px-4 py-2"
+          type="text"
+          placeholder="role_id"
+        />
+      </div> */}
+            <div className="p-1">
+              Create:
+              <input
+                className="w-full border border-gray-300 rounded-md px-4 py-2"
+                type="date"
+                placeholder="createdAt"
+              // value={searchCreatedAt}
+              // onChange={(e) => setSearchCreatedAt(e.target.value)}
+              />
+            </div>
+            <div className="p-1">
+              DOB:
+              <input
+                className="w-full border border-gray-300 rounded-md px-4 py-2"
+                type="date"
+                placeholder="dob"
+              // value={searchDob}
+              // onChange={(e) => setSearchDob(e.target.value)}
+              />
+            </div>
+            <div className="p-1">
+              Phone:
+              <input
+                className="w-full border border-gray-300 rounded-md px-4 py-2"
+                type="text"
+                placeholder="phone"
+                value={searchPhone}
+                onChange={(e) => setSearchPhone(e.target.value)}
+              />
+            </div>
+            <div className="p-1">
+              Address:
+              <input
+                className="w-full border border-gray-300 rounded-md px-4 py-2"
+                type="text"
+                placeholder="address"
+              />
+            </div>
+            <div className="flex justify-center mt-3 p-2">
+              <button className="bg-blue-600 text-white px-3 py-2 rounded-md mt-2" type="submit">
+                Search
+              </button>
+            </div>
           </div>
-          <div className="p-1" >Role:
-            <input
-              className="w-full border border-gray-300 rounded-md px-4 py-2"
-              type="text"
-              placeholder="role_id"
-            // value={searchValue}
-            // onChange={e => setSearchValue(e.target.value)}
-            />
-
-          </div>
-          <div className="p-1">Create:
-            <input
-              className="w-full border border-gray-300 rounded-md px-4 py-2"
-              type="date"
-              placeholder="createdAt"
-            // value={searchValue}
-            // onChange={e => setSearchValue(e.target.value)}
-            /></div>
-          <div className="p-1">DOB:
-            <input
-              className="w-full border border-gray-300 rounded-md px-4 py-2"
-              type="date"
-              placeholder="dob"
-            // value={searchValue}
-            // onChange={e => setSearchValue(e.target.value)}
-            /></div>
-
-          <div className="p-1">Phone:
-            <input
-              className="w-full border border-gray-300 rounded-md px-4 py-2"
-              type="text"
-              placeholder="phone_number"
-              value={searchPhone}
-              onChange={e => setSearchPhone(e.target.value)}
-            /></div>
-
-          <div className="p-1">Address:
-            <input
-              className="w-full border border-gray-300 rounded-md px-4 py-2"
-              type="text"
-              placeholder="address"
-            // value={searchValue}
-            // onChange={e => setSearchValue(e.target.value)}
-            /></div>
-        </div>
-        <div class="flex justify-center">
-          <button class="bg-blue-500 text-white px-3 py-2 rounded-md mt-2" type="submit">
-            Search
-          </button>
         </div>
       </form>
+
       <Button className="bg-blue-600 text-white rounded-md mt-3 float-right">
         <Link to={`/admin/Add`} className="no-underline flex flex-col items-center">
           <span>Thêm mới</span>
