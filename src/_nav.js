@@ -9,7 +9,8 @@ import {
   cilStar,
   cilPeople,
   cilUserPlus,
-  cilCalendar
+  cilCalendar,
+  cilCalendarCheck
 
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
@@ -57,7 +58,7 @@ const _nav = [
     component: CNavItem,
     name: 'Checkin/Checkout',
     to: '/admin/checkin',
-    icon: <CIcon icon={cilCalendar} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilCalendarCheck} customClassName="nav-icon" />,
   },
   {
     component: CNavTitle,
