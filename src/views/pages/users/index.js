@@ -28,9 +28,8 @@ const products = () => {
     e.preventDefault(); // Prevent page reload
     fetchData();
   };
-
   useEffect(() => {
-    // Gọi API để lấy dữ liệu  
+    // Gọi API để lấy dữ liệu
     GetData(`/users?roleId&page=0&size`)
       .then(response => {
         setData(response.data);
@@ -41,8 +40,6 @@ const products = () => {
         console.error('Lỗi khi gọi API:', error);
       });
   }, []);
-
-
   //list users
   useEffect(() => {
     fetchData();
@@ -71,7 +68,7 @@ const products = () => {
         console.log('Xóa không thành công');
       }
     } catch (error) {
-      console.error('Error deleting data:', error);
+      console.error('Error:', error);
     }
   };
   const columns = [
@@ -162,7 +159,7 @@ const products = () => {
         <div className="flex justify-center">
           <div className="flex items-center space-x-4">
             <div className="p-1">
-              Fullname:
+              <span className="font-bold text-sm">Fullname</span>
               <Input
                 className="w-full border border-gray-300 rounded-md px-4 py-2"
                 type="text"
@@ -172,16 +169,9 @@ const products = () => {
                 onSearch={() => fetchData()}
               />
             </div>
-            {/* <div className="p-1">
-        Role:
-        <input
-          className="w-full border border-gray-300 rounded-md px-4 py-2"
-          type="text"
-          placeholder="role_id"
-        />
-      </div> */}
+            {/* <div className="p-1"> ... </div> */}
             <div className="p-1">
-              Create:
+              <span className="font-bold text-sm">Create</span>
               <input
                 className="w-full border border-gray-300 rounded-md px-4 py-2"
                 type="date"
@@ -191,7 +181,7 @@ const products = () => {
               />
             </div>
             <div className="p-1">
-              DOB:
+              <span className="font-bold text-sm">Dob</span>
               <input
                 className="w-full border border-gray-300 rounded-md px-4 py-2"
                 type="date"
@@ -201,7 +191,7 @@ const products = () => {
               />
             </div>
             <div className="p-1">
-              Phone:
+              <span className="font-bold text-sm">Phone</span>
               <input
                 className="w-full border border-gray-300 rounded-md px-4 py-2"
                 type="text"
@@ -211,7 +201,7 @@ const products = () => {
               />
             </div>
             <div className="p-1">
-              Address:
+              <span className="font-bold text-sm">Address</span>
               <input
                 className="w-full border border-gray-300 rounded-md px-4 py-2"
                 type="text"
@@ -226,6 +216,7 @@ const products = () => {
           </div>
         </div>
       </form>
+
 
       <Button className="bg-blue-600 text-white rounded-md mt-3 float-right">
         <Link to={`/admin/Add`} className="no-underline flex flex-col items-center">

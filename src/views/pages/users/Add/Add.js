@@ -23,7 +23,6 @@ const validationSchema = Yup.object().shape({
 
 const Add = () => {
   const navigate = useNavigate()
-
   // Initial form values
   const initialData = {
     username: "",
@@ -40,7 +39,6 @@ const Add = () => {
     district: "",
     ward: "",
   };
-
   const handleSubmit = async (data, { resetForm }) => {
     // Perform the API call or any other logic to add the employee
     console.log('Submitted values:', data);
@@ -56,12 +54,10 @@ const Add = () => {
     // Gọi API để lấy danh sách tỉnh
     GetData(`/provinces`)
       .then(data => {
-
         const formattedOptionsProvinces = data.data.map(option => ({
           value: option.id,
           label: option.name
         }));
-
         setProvinces(formattedOptionsProvinces)
       });
   }, []);
@@ -86,12 +82,10 @@ const Add = () => {
     // Lấy danh sách phường từ API dựa trên huyện đã chọn
     GetData(``)
       .then(response => {
-
         const formattedOptionsWards = response.data.map(option => ({
           value: option.id,
           label: option.name
         }));
-
         setWards(formattedOptionsWards);
       })
       .catch(error => {
@@ -102,10 +96,8 @@ const Add = () => {
     <Formik
       initialValues={initialData}
       validationSchema={validationSchema}
-
       onSubmit={handleSubmit}
     >
-
       <Form className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700'>
         <div>
           <label htmlFor="fullname">Full Name :</label>

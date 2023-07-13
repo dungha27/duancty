@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Space, Table, Button, Popconfirm, Input, message, Form, Select } from "antd";
 import { Link } from "react-router-dom";
 import { DeleteTwoTone, EditTwoTone, FileAddTwoTone } from '@ant-design/icons';
-import { GetData } from '../../../api';
+import { DeleteData, GetData } from '../../../api';
 import { PAGE_DEFAULT } from '../../../constants';
 import moment from 'moment';
 // import { DeleteData } from '../../../api';
@@ -29,20 +29,20 @@ const working = () => {
             console.error('Error fetching data:', error);
         }
     };
-    //   const onHandleDelete = async (id) => {
-    //     console.log("id", id)
-    //     try {
-    //       const response = await DeleteData(`/partner/${id}`);
-    //       if (response.status === 200) {
-    //         message.success("Xóa thành công");
-    //         fetchData();
-    //       } else {
-    //         message.error('Xóa không thành công');
-    //       }
-    //     } catch (error) {
-    //       console.error('Error deleting data:', error);
-    //     }
-    //   };
+      const onHandleDelete = async (id) => {
+        console.log("id", id)
+        try {
+          const response = await DeleteData(`/working-days/${id}`);
+          if (response.status === 200) {
+            console.log("Xóa thành công");
+            fetchData();
+          } else {
+          console.log('Xóa không thành công');
+          }
+        } catch (error) {
+          console.log('Error deleting data:', error);
+        }
+      };
     const columns = [
         {
             title: "No",
@@ -70,24 +70,29 @@ const working = () => {
             key: 'expectedEnd',
             render: (expectedEnd) => moment(expectedEnd).format('DD/MM/YYYY'),
         },
+        // {
+        //     title: 'location',
+        //     dataIndex: 'location',
+        //     key: 'location',
+        //     // render: (date) => moment(date).format('DD/MM/YYYY'),
+        // },
         {
-          title: 'Action',
-          key: 'action',
-        //   render: (record) => (
-        //     <Space size="middle">
-        //       <Link to={`/admin/Edit_dt/${record.id}`}><EditTwoTone style={{ fontSize: '20px', color: '#08c' }} /></Link>     
-        //          <Popconfirm
-        //         title="Delete the task"
-        //         description="Are you sure to delete this task?"
-        //         onConfirm={() => onHandleDelete(record.id)}
-        //         okText="Yes"
-        //         cancelText="No"
-        //         okButtonProps={{ className: "text-light bg-primary" }}
-
-        //       >
-        //         <DeleteTwoTone style={{ fontSize: '18px' }} /></Popconfirm>
-        //     </Space>
-        //   ),
+            title: 'Action',
+            key: 'action',
+            render: (record) => (
+                <Space size="middle">
+                    <Link to={`/admin/Editwk/${record.id}`}><EditTwoTone style={{ fontSize: '20px', color: '#08c' }} /></Link>
+                    <Popconfirm
+                        title="Delete the task"
+                        description="Are you sure to delete this task?"
+                        onConfirm={() => onHandleDelete(record.id)}
+                        okText="Yes"
+                        cancelText="No"
+                        okButtonProps={{ className: "text-light bg-primary" }}
+                    >
+                        <DeleteTwoTone style={{ fontSize: '18px' }} /></Popconfirm>
+                </Space>
+            ),
         },
     ];
     const onChangePage = (currentPage) => {
@@ -96,7 +101,7 @@ const working = () => {
     return (
         <div>
 
-            <Button className="float-right mb-6 bg-primary text-light "> <Link to={`/admin/Add_dt`} className="no-underline">Thêm Mới</Link></Button>
+            <Button className="float-right mb-6 bg-primary text-light "> <Link to={`/admin/Add_working`} className="no-underline">Thêm Mới</Link></Button>
 
             <Table loading={loading} columns={columns} dataSource={data} pagination={{ pageSize: data.pageSize, total: data.totalCount, onChange: onChangePage }} />
         </div>

@@ -54,6 +54,12 @@ const _nav = [
     icon: <CIcon icon={cilCalendar} customClassName="nav-icon" />,
   },
   {
+    component: CNavItem,
+    name: 'Checkin/Checkout',
+    to: '/admin/checkin',
+    icon: <CIcon icon={cilCalendar} customClassName="nav-icon" />,
+  },
+  {
     component: CNavTitle,
     name: 'Extras',
   },
