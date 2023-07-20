@@ -1,74 +1,47 @@
+import { DeleteTwoTone, EditTwoTone } from "@ant-design/icons";
+import { Button, Input, Popconfirm, Space, Table } from "antd";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
-import { Space, Table, Button, Popconfirm, Input, message, Form, Select, DatePicker } from "antd";
-import { GetData } from '../../../api';
-import { PAGE_DEFAULT } from '../../../constants';
-import { DeleteTwoTone, EditTwoTone, FileAddTwoTone, PlusCircleTwoTone } from '@ant-design/icons';
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import moment from 'moment';
-import { DeleteData } from '../../../api';
-// import { AudioOutlined } from '@ant-design/icons';
+import { PAGE_DEFAULT } from "../../../constants";
+import { getUsers } from "../../../redux/actions/users";
+import http from "../../../http-common";
 
-
-const products = () => {
+const Users = () => {
+  const { users, loading } = useSelector((state) => state.users);
+  const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-  // const [searchCreatedAt, setSearchCreatedAt] = useState("");
-  // const [searchDob, setSearchDob] = useState("");
   const [searchPhone, setSearchPhone] = useState("");
 
-  const [data, setData] = useState([])
-  const [loading, setLoading] = useState(false);
-  const { pageIndex, pageSize } = PAGE_DEFAULT
+  const { pageIndex, pageSize } = PAGE_DEFAULT;
   const [pageParams, setPageParams] = useState({
     pageIndex: pageIndex,
-    pageSize: pageSize
+    pageSize: pageSize,
   });
 
   const handleSearch = (e) => {
     e.preventDefault(); // Prevent page reload
-    fetchData();
+    // fetchData();
   };
-  useEffect(() => {
-    // Gọi API để lấy dữ liệu
-    GetData(`/users?roleId&page=0&size`)
-      .then(response => {
-        setData(response.data);
-        // Áp dụng logic filter ban đầu cho dữ liệu trả về từ API
-        setFilteredData(response.data);
-      })
-      .catch(error => {
-        console.error('Lỗi khi gọi API:', error);
-      });
-  }, []);
   //list users
   useEffect(() => {
-    fetchData();
-  }, []);
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const response = await GetData(`/users?page=${pageIndex}&size=${pageSize}&search=${searchQuery}&phone=${searchPhone}`);
-      setData(response.data);
-      setFilteredData(response.data);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.error('Error fetching data:', error);
-    }
-  };
+    dispatch(getUsers({ ...pageParams, search: searchQuery }));
+  }, [dispatch]);
   //delete
   const onHandleDelete = async (values) => {
-    console.log("id", values)
+    console.log("id", values);
     try {
-      const response = await DeleteData(`/users/${values}`);
+      const response = await http.delete(`/users/${values}`);
       if (response.status === 200) {
         console.log("Xóa thành công");
         fetchData();
       } else {
-        console.log('Xóa không thành công');
+        console.log("Xóa không thành công");
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
   const columns = [
@@ -78,7 +51,7 @@ const products = () => {
       // key: "id",
       render: (_, record, index) => {
         return index + 1;
-      }
+      },
     },
     {
       title: "Full name",
@@ -90,22 +63,22 @@ const products = () => {
       dataIndex: "gender",
       key: "gender",
       render: (record) => {
-        return record === 0 ? 'Nam' : 'Nữ';
-      }
+        return record === 0 ? "Nam" : "Nữ";
+      },
     },
     {
       title: "Role",
       dataIndex: "role_id",
       key: "role_id",
       render: (record) => {
-        return record?.role_name
-      }
+        return record?.role_name;
+      },
     },
     {
       title: "DOB",
       dataIndex: "dob",
       key: "dob",
-      render: (date) => moment(date).format('DD/MM/YYYY'),
+      render: (date) => moment(date).format("DD/MM/YYYY"),
     },
     {
       title: "Phone",
@@ -132,7 +105,9 @@ const products = () => {
       key: "action",
       render: (record) => (
         <Space size="middle" className="">
-          <Link to={`/admin/Edit/${record.id}`}><EditTwoTone style={{ fontSize: '20px', color: '#08c' }} /></Link>
+          <Link to={`/admin/Edit/${record.id}`}>
+            <EditTwoTone style={{ fontSize: "20px", color: "#08c" }} />
+          </Link>
           <Popconfirm
             title="Delete the task"
             description="Are you sure to delete this task?"
@@ -140,22 +115,24 @@ const products = () => {
             okText="Yes"
             cancelText="No"
             okButtonProps={{ className: "text-light bg-primary" }}
-
           >
-            <DeleteTwoTone style={{ fontSize: '18px' }} />              </Popconfirm>
+            <DeleteTwoTone style={{ fontSize: "18px" }} />{" "}
+          </Popconfirm>
         </Space>
       ),
     },
   ];
 
-
   const onChangePage = (currentPage) => {
-    setPageParams({ ...pageParams, pageIndex: currentPage })
-  }
+    setPageParams({ ...pageParams, pageIndex: currentPage });
+  };
 
   return (
     <div>
-      <form className="col-span-3 md:col-span-4 bg-gray-50" onSubmit={handleSearch}>
+      <form
+        className="col-span-3 md:col-span-4 bg-gray-50"
+        onSubmit={handleSearch}
+      >
         <div className="flex justify-center">
           <div className="flex items-center space-x-4">
             <div className="p-1">
@@ -176,8 +153,8 @@ const products = () => {
                 className="w-full border border-gray-300 rounded-md px-4 py-2"
                 type="date"
                 placeholder="createdAt"
-              // value={searchCreatedAt}
-              // onChange={(e) => setSearchCreatedAt(e.target.value)}
+                // value={searchCreatedAt}
+                // onChange={(e) => setSearchCreatedAt(e.target.value)}
               />
             </div>
             <div className="p-1">
@@ -186,8 +163,8 @@ const products = () => {
                 className="w-full border border-gray-300 rounded-md px-4 py-2"
                 type="date"
                 placeholder="dob"
-              // value={searchDob}
-              // onChange={(e) => setSearchDob(e.target.value)}
+                // value={searchDob}
+                // onChange={(e) => setSearchDob(e.target.value)}
               />
             </div>
             <div className="p-1">
@@ -209,7 +186,10 @@ const products = () => {
               />
             </div>
             <div className="flex justify-center mt-3 p-2">
-              <button className="bg-blue-600 text-white px-3 py-2 rounded-md mt-2" type="submit">
+              <button
+                className="bg-blue-600 text-white px-3 py-2 rounded-md mt-2"
+                type="submit"
+              >
                 Search
               </button>
             </div>
@@ -217,20 +197,30 @@ const products = () => {
         </div>
       </form>
 
-
       <Button className="bg-blue-600 text-white rounded-md mt-3 float-right">
-        <Link to={`/admin/Add`} className="no-underline flex flex-col items-center">
+        <Link
+          to={`/admin/Add`}
+          className="no-underline flex flex-col items-center"
+        >
           <span>Thêm mới</span>
         </Link>
       </Button>
       <br></br>
       <br></br>
       <br></br>
-      {filteredData.length > 0 && (
-        <Table loading={loading} columns={columns} dataSource={filteredData} pagination={{ pageSize: data.pageSize, total: data.totalCount, onChange: onChangePage }} />
+      {users?.length > 0 && (
+        <Table
+          loading={loading}
+          columns={columns}
+          dataSource={users}
+          pagination={{
+            pageSize: users?.pageSize,
+            total: users?.totalCount,
+            onChange: onChangePage,
+          }}
+        />
       )}
     </div>
-
   );
 };
-export default products;
+export default Users;

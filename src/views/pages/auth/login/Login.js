@@ -1,125 +1,122 @@
-import { Formik, Form, Field, ErrorMessage } from 'formik'
-import { toast } from 'react-toastify'
-import React from 'react'
-import { Image } from 'react-bootstrap'
-import { Link, Navigate, redirect, useNavigate } from 'react-router-dom'
-import { PostData } from '../../../../api'
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { Button, Form, Input, Typography } from "antd";
+import React, { useEffect, useState } from "react";
+import { Image, Stack } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import TrimInput from "../../../../components/Input/TrimInput";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../../../../redux/actions/auth";
+import { toast } from "react-toastify";
 const Login = () => {
+  const { loading, userInfo, accessToken, error, success } = useSelector(
+    (state) => state.auth
+  );
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+    if (userInfo && accessToken && success) {
+      toast.success("Login Success!");
+      Navigate("/");
+    }
+  }, [error, success]);
+  const dispatch = useDispatch();
   const Navigate = useNavigate();
-
   const initialValues = {
-    username: 'admin',
-    password: 'admin@123',
-  }
-  const validate = (values) => {
-    const errors = {}
-    if (!values.username) {
-      errors.username = 'Please enter username!'
-    } else if (values.username.length < 5) {
-      errors.username = 'Must be 5 characters or more!'
-    }
-    if (!values.password) {
-      errors.password = 'Please enter password!'
-    } else if (values.password.length < 8) {
-      errors.password = 'Must be 8 characters or more!'
-    }
-    return errors
-    
-  }
-  const onSubmit = async (values, { setSubmitting }) => {
-    const result = PostData('/auth/login', values)
-    console.log(result)
-    result
-      .then((res) => {
-        console.log(res)
-        if (res.status === 200 && res.data) {
-          toast.success("Login Sucess")
-          localStorage.setItem('accessToken', res?.data?.accessToken)
-          Navigate('/admin/dashboard')
-        }
-      })
-      .catch((err) => {
-        toast.error(err)
-      })
-
-    setTimeout(() => {
-      setSubmitting(false)
-    }, 400)
-  }
+    username: "",
+    password: "",
+  };
+  const onSubmit = async (values) => {
+    dispatch(login(values));
+  };
+  const [loginForm] = Form.useForm();
   return (
     <section className="vh-100 d-flex ">
-      <div className="container-fluid h-custom">
-        <div className="row d-flex justify-content-center align-items-center h-100">
-          <div className="col-md-9 col-lg-6 col-xl-5">
+      <div className="container h-custom">
+        <div className="row justify-content-evenly align-items-center h-100">
+          <div className="col-7">
             <Image
               src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
-              className="img-fluid"
               alt="Sample image"
             />
           </div>
-          <div className="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-            <Formik initialValues={initialValues} validate={validate} onSubmit={onSubmit}>
-              <Form>
-                <div className="form-outline mb-4">
-                  <label className="form-label" htmlFor="username">
-                    Username
-                  </label>
-                  <Field
-                    type="text"
-                    name="username"
-                    id="username"
-                    className="form-control form-control-lg"
-                    placeholder="Enter a valid username"
-                    required
-                  />
-                  <ErrorMessage name="username" component="div" className="text-danger" />
-                </div>
-                <div className="form-outline mb-3">
-                  <label className="form-label" htmlFor="password">
-                    Password
-                  </label>
-                  <Field
-                    type="password"
-                    name="password"
-                    id="password"
-                    className="form-control form-control-lg"
-                    placeholder="Enter password"
-                    required
-                  />
-                  <ErrorMessage name="password" component="div" className="text-danger" />
-                </div>
-                <div className="d-flex justify-content-between align-items-center">
-                  <div className="form-check mb-0">
-                    <Field
-                      type="checkbox"
-                      name="rememberMe"
-                      id="rememberMe"
-                      className="form-check-input me-2"
+          <div className="col">
+            <Stack
+              direction="vertical"
+              gap={8}
+              className="shadow-sm p-5 bg-white rounded"
+            >
+              <Typography
+                style={{
+                  fontSize: "36px",
+                  textAlign: "center",
+                }}
+              >
+                Login
+              </Typography>
+              <Form
+                name="basic"
+                form={loginForm}
+                initialValues={initialValues}
+                onFinish={onSubmit}
+              >
+                <Form.Item
+                  name="username"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter username!",
+                    },
+                  ]}
+                >
+                  <TrimInput>
+                    <Input
+                      style={{ padding: "10px" }}
+                      prefix={<UserOutlined className="site-form-item-icon" />}
+                      placeholder="Username"
                     />
-                    <label className="form-check-label" htmlFor="rememberMe">
-                      Remember me
-                    </label>
-                  </div>
-                  <Link to="/" className="text-body">
-                    Forgot password?
-                  </Link>
-                </div>
-                <div className="text-center text-lg-start mt-2 pt-2">
-                  <button
-                    type="submit"
-                    className="btn btn-primary btn-lg"
-                    style={{ padding: '11px 28px' }}
+                  </TrimInput>
+                </Form.Item>
+                <Form.Item
+                  name="password"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter Password!",
+                    },
+                  ]}
+                >
+                  <TrimInput>
+                    <Input.Password
+                      style={{ padding: "10px" }}
+                      prefix={<LockOutlined className="site-form-item-icon" />}
+                      placeholder="********"
+                    />
+                  </TrimInput>
+                </Form.Item>
+                <Form.Item>
+                  <Button
+                    style={{
+                      width: "100%",
+                      backgroundColor: loading ? "#91caff" : "#1677ff",
+                    }}
+                    type="primary"
+                    htmlType="submit"
+                    size="large"
+                    className="login-form-button"
+                    disabled={loading}
+                    loading={loading}
                   >
-                    Login
-                  </button>
-                </div>
+                    Log in
+                  </Button>
+                </Form.Item>
               </Form>
-            </Formik>
+            </Stack>
           </div>
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
