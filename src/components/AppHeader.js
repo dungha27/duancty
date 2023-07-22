@@ -1,6 +1,5 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
+import { cilBell, cilEnvelopeOpen, cilList, cilMenu } from "@coreui/icons";
+import CIcon from "@coreui/icons-react";
 import {
   CContainer,
   CHeader,
@@ -8,26 +7,36 @@ import {
   CHeaderDivider,
   CHeaderNav,
   CHeaderToggler,
-  CNavLink,
   CNavItem,
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import { cilBell, cilEnvelopeOpen, cilList, cilMenu } from '@coreui/icons'
+  CNavLink,
+} from "@coreui/react";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { NavLink, useLocation } from "react-router-dom";
 
-import { AppBreadcrumb } from './index'
-import { AppHeaderDropdown } from './header/index'
-import { logo } from '../assets/brand/logo.js'
+import { logo } from "../assets/brand/logo.js";
+import { AppHeaderDropdown } from "./header/index";
+import navRoute from "../_nav.js";
+import { useState } from "react";
+import { useEffect } from "react";
 
 const AppHeader = () => {
-  const dispatch = useDispatch()
-  const sidebarShow = useSelector((state) => state.sidebarShow)
-
+  const dispatch = useDispatch();
+  const sidebarShow = useSelector((state) => state.sidebarShow);
+  const router = useLocation();
+  const getRoute = (name) => {
+    return navRoute?.find((nav) => nav.to === name);
+  };
+  const [route, setRoute] = useState(getRoute(router.pathname));
+  useEffect(() => {
+    setRoute(getRoute(router.pathname));
+  }, [router.pathname]);
   return (
     <CHeader position="sticky" className="mb-4">
       <CContainer fluid>
         <CHeaderToggler
           className="ps-1"
-          onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
+          onClick={() => dispatch({ type: "set", sidebarShow: !sidebarShow })}
         >
           <CIcon icon={cilMenu} size="lg" />
         </CHeaderToggler>
@@ -36,8 +45,8 @@ const AppHeader = () => {
         </CHeaderBrand>
         <CHeaderNav className="d-none d-md-flex me-auto">
           <CNavItem>
-            <CNavLink to="/dashboard" component={NavLink}>
-              Dashboard
+            <CNavLink to={route?.to} component={NavLink}>
+              {route?.name}
             </CNavLink>
           </CNavItem>
         </CHeaderNav>
@@ -63,11 +72,9 @@ const AppHeader = () => {
         </CHeaderNav>
       </CContainer>
       <CHeaderDivider />
-      <CContainer fluid>
-        <AppBreadcrumb />
-      </CContainer>
+      <CContainer fluid></CContainer>
     </CHeader>
-  )
-}
+  );
+};
 
-export default AppHeader
+export default AppHeader;

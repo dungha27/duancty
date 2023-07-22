@@ -122,16 +122,13 @@
 //   );
 // };
 // export default products;
+import { DeleteTwoTone, EditTwoTone, SearchOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Popconfirm, Select, Space, Table } from "antd";
 import React, { useEffect, useState } from "react";
-import { Space, Table, Button, Popconfirm, Input, message, Form, Select } from "antd";
 import { Link } from "react-router-dom";
-import { DeleteTwoTone, EditTwoTone, FileAddTwoTone, SearchOutlined } from '@ant-design/icons';
-import { GetData } from '../../../api';
-import { PAGE_DEFAULT } from '../../../constants';
-import moment from 'moment';
-import { DeleteData } from '../../../api';
+import http from '../../../http-common';
 
-const Products = () => {
+const Partners = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { Option } = Select;
   const { Search } = Input;
@@ -149,7 +146,7 @@ const Products = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await GetData(`/partner?page=${pageParams.pageIndex}&size=${pageParams.pageSize}&search=${searchQuery}`);
+      const response = await http.get(`/partner?page=${pageParams.pageIndex}&size=${pageParams.pageSize}&search=${searchQuery}`);
       setData(response.data);
       setLoading(false);
     } catch (error) {
@@ -161,7 +158,7 @@ const Products = () => {
   const onHandleDelete = async (id) => {
     console.log("id", id)
     try {
-      const response = await DeleteData(`/partner/${id}`);
+      const response = await http.delete(`/partner/${id}`);
       if (response.status === 200) {
         console.log("Xóa thành công");
         fetchData();
@@ -243,5 +240,5 @@ const Products = () => {
   );
 };
 
-export default Products;
+export default Partners;
 

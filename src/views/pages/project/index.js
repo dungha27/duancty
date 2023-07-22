@@ -153,17 +153,15 @@
 // export default products;
 
 
-import React, { useEffect, useState } from "react";
-import { Space, Table, Button, Popconfirm, Input, message, Form, Select } from "antd";
-import { Link } from "react-router-dom";
-import { DeleteTwoTone, EditTwoTone, FileAddTwoTone, SearchOutlined } from '@ant-design/icons';
-import { GetData } from '../../../api';
-import { PAGE_DEFAULT } from '../../../constants';
+import { DeleteTwoTone, EditTwoTone, SearchOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Popconfirm, Select, Space, Table } from "antd";
 import moment from 'moment';
-import { DeleteData } from '../../../api';
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import http from '../../../http-common';
 
 
-const Products = () => {
+const Projects = () => {
   const { Search } = Input;
   const [searchQuery, setSearchQuery] = useState("");
   const { Option } = Select;
@@ -184,7 +182,7 @@ const Products = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await GetData(`/project?page=${pageParams.pageIndex}&size=${pageParams.pageSize}&search=${searchQuery}`);
+      const response = await http.get(`/project?page=${pageParams.pageIndex}&size=${pageParams.pageSize}&search=${searchQuery}`);
       setData(response.data);
       setLoading(false);
     } catch (error) {
@@ -195,7 +193,7 @@ const Products = () => {
 
   const fetchPartner = async () => {
     try {
-      const response = await GetData(`/partner?page=0&size`);
+      const response = await http.get(`/partner?page=0&size`);
       setPartner(response.data);
     } catch (error) {
       console.error('Error:', error);
@@ -205,7 +203,7 @@ const Products = () => {
   const onHandleDelete = async (id) => {
     console.log("id", id)
     try {
-      const response = await DeleteData(`/project/${id}`);
+      const response = await http.delete(`/project/${id}`);
       if (response.status === 200) {
         console.log("Xóa thành công");
         fetchData();
@@ -301,4 +299,4 @@ const Products = () => {
   );
 };
 
-export default Products;
+export default Projects;
