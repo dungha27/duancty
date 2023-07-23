@@ -12,6 +12,7 @@ const Working = () => {
   const { workingList, loading, error } = useSelector(
     (state) => state.workingList
   );
+  const [data, setData] = useState(workingList?.workingListDTOS);
   const dispatch = useDispatch();
   const Navigate = useNavigate();
   const { pageIndex, pageSize } = PAGE_DEFAULT;
@@ -21,10 +22,8 @@ const Working = () => {
   });
   useEffect(() => {
     dispatch(getWorkingList(pageParams));
-    if (error?.status === 401) {
-      Navigate("/auth/login");
-    }
-  }, [dispatch]);
+    setData(workingList?.workingListDTOS);
+  }, [dispatch, pageParams]);
 
   const getShift = (shift) => {
     switch (shift) {
@@ -118,7 +117,7 @@ const Working = () => {
     <div>
       <Button className="float-right mb-6 bg-primary text-light ">
         {" "}
-        <Link to={`/Working/Add`} className="no-underline">
+        <Link to={"./add"} className="no-underline">
           Thêm Mới
         </Link>
       </Button>
@@ -126,8 +125,10 @@ const Working = () => {
       <Table
         loading={loading}
         columns={columns}
-        dataSource={workingList?.workingListDTOS}
+        dataSource={data}
         pagination={{
+          showTotal: (total, range) =>
+            `${range[0]}-${range[1]} of ${total} items`,
           pageSize: pageParams.pageSize,
           total: workingList?.totalCount,
           onChange: onChangePage,

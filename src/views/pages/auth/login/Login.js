@@ -17,7 +17,7 @@ const Login = () => {
     }
     if (userInfo && accessToken && success) {
       toast.success("Login Success!");
-      Navigate("/");
+      Navigate("/user-management/users");
     }
   }, [error, success]);
   const dispatch = useDispatch();

@@ -1,11 +1,12 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import http from '../../http-common';
+import http from "../../http-common";
 export const getUsers = createAsyncThunk(
   "users",
-  async ({ search, pageIndex, pageSize }, { rejectWithValue }) => {
+  async ({ query, pageIndex, pageSize }, { rejectWithValue }) => {
     try {
       const { data } = await http.get(
-        `/users?pageIndex=${pageIndex}&pageSize=${pageSize}&search=${search}`
+        `/users?pageIndex=${pageIndex}&pageSize=${pageSize}`,
+        { params: query }
       );
 
       return data;
@@ -17,14 +18,14 @@ export const getUsers = createAsyncThunk(
       }
     }
   }
-
 );
 
 export const postUsers = createAsyncThunk(
   "post/users",
-  async ({ username, password, fullname, dob, role, department, email, gender, address, province, ward, district }, { rejectWithValue }) => {
+  async (data, { rejectWithValue }) => {
     try {
-      await http.post(`/users`);
+      const { response } = await http.post(`/users`, data);
+      console.log(response);
     } catch (error) {
       if (error.response && error.response.data) {
         return rejectWithValue(error.response.data);
@@ -33,5 +34,4 @@ export const postUsers = createAsyncThunk(
       }
     }
   }
-
 );

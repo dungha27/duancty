@@ -1,34 +1,69 @@
 import { DeleteTwoTone, EditTwoTone } from "@ant-design/icons";
-import { Button, Input, Popconfirm, Space, Table } from "antd";
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  Popconfirm,
+  Space,
+  Table,
+  Tag,
+} from "antd";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { PAGE_DEFAULT } from "../../../constants";
-import { getUsers } from "../../../redux/actions/users";
 import http from "../../../http-common";
+import { getUsers } from "../../../redux/actions/users";
 
 const Users = () => {
   const { users, loading } = useSelector((state) => state.users);
   const dispatch = useDispatch();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
-  const [searchPhone, setSearchPhone] = useState("");
-
+  const [userData, setUserData] = useState(users?.userDTOS);
+  const [searchQuery, setSearchQuery] = useState({
+    search: "",
+    address: "",
+    dob: "",
+    phoneNumber: "",
+  });
   const { pageIndex, pageSize } = PAGE_DEFAULT;
   const [pageParams, setPageParams] = useState({
     pageIndex: pageIndex,
     pageSize: pageSize,
   });
-
-  const handleSearch = (e) => {
-    e.preventDefault(); // Prevent page reload
-    // fetchData();
+  const [formSearch] = Form.useForm();
+  const handleSearch = (values) => {
+    console.log(values)
+    setSearchQuery({
+      ...searchQuery,
+      search: values?.search,
+      address: values?.address,
+      phoneNumber: values?.phoneNumber,
+      dob: values?.dob ? moment(values?.dob?.$d).format("yyyy-MM-DDT00:00:00") : "",
+    });
   };
   //list users
   useEffect(() => {
-    dispatch(getUsers({ ...pageParams, search: searchQuery }));
-  }, [dispatch]);
+    dispatch(getUsers({ ...pageParams, query: searchQuery }));
+  }, [dispatch, searchQuery, pageParams]);
+
+  useEffect(() => {
+    setUserData(users?.userDTOS);
+  }, [users]);
+
+  const getRole = (value) => {
+    switch (value) {
+      case "admin": {
+        return <Tag color="error">{value.toUpperCase()}</Tag>;
+      }
+      case "employee": {
+        return <Tag color="success">{value.toUpperCase()}</Tag>;
+      }
+      default:
+        return;
+    }
+  };
   //delete
   const onHandleDelete = async (values) => {
     console.log("id", values);
@@ -47,8 +82,6 @@ const Users = () => {
   const columns = [
     {
       title: "No",
-      // dataIndex: "id",
-      // key: "id",
       render: (_, record, index) => {
         return index + 1;
       },
@@ -68,11 +101,9 @@ const Users = () => {
     },
     {
       title: "Role",
-      dataIndex: "role_id",
-      key: "role_id",
-      render: (record) => {
-        return record?.role_name;
-      },
+      dataIndex: "role_Name",
+      key: "role_Name",
+      render: (record) => getRole(record),
     },
     {
       title: "DOB",
@@ -105,7 +136,7 @@ const Users = () => {
       key: "action",
       render: (record) => (
         <Space size="middle" className="">
-          <Link to={`/admin/Edit/${record.id}`}>
+          <Link to={`./update/${record.id}`}>
             <EditTwoTone style={{ fontSize: "20px", color: "#08c" }} />
           </Link>
           <Popconfirm
@@ -123,71 +154,71 @@ const Users = () => {
     },
   ];
 
+  const onChangeDate = (values, name) => {
+    formSearch.setFieldValue(name, values);
+    console.log(values)
+  };
+
   const onChangePage = (currentPage) => {
     setPageParams({ ...pageParams, pageIndex: currentPage });
   };
 
   return (
     <div>
-      <form
+      <Form
+        form={formSearch}
         className="col-span-3 md:col-span-4 bg-gray-50"
-        onSubmit={handleSearch}
+        onFinish={handleSearch}
       >
-        <div className="flex justify-center">
+        <div className="flex px-5 py-2 items-center">
           <div className="flex items-center space-x-4">
             <div className="p-1">
               <span className="font-bold text-sm">Fullname</span>
-              <Input
-                className="w-full border border-gray-300 rounded-md px-4 py-2"
-                type="text"
-                placeholder="Fullname"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onSearch={() => fetchData()}
-              />
+              <Form.Item name="search">
+                <Input
+                  className="w-full border border-gray-300 rounded-md px-4 py-2"
+                  type="text"
+                  placeholder="Fullname"
+                />
+              </Form.Item>
             </div>
             {/* <div className="p-1"> ... </div> */}
             <div className="p-1">
               <span className="font-bold text-sm">Create</span>
-              <input
-                className="w-full border border-gray-300 rounded-md px-4 py-2"
-                type="date"
-                placeholder="createdAt"
-                // value={searchCreatedAt}
-                // onChange={(e) => setSearchCreatedAt(e.target.value)}
-              />
+              <Form.Item name="dob">
+                <DatePicker className="w-full border border-gray-300 rounded-md px-4 py-2" onChange={(value) => onChangeDate(value, "createdAt")} allowClear />
+              </Form.Item>
             </div>
+            {/* <div className="p-1">
+              <span className="font-bold text-sm">Date Of Birth</span>
+              <Form.Item name="dob">
+                <DatePicker
+                  className="w-full border border-gray-300 rounded-md px-4 py-2"
+                  onChange={(values) => onChangeDate(values, "dob")}
+                />
+              </Form.Item>
+            </div> */}
             <div className="p-1">
-              <span className="font-bold text-sm">Dob</span>
-              <input
-                className="w-full border border-gray-300 rounded-md px-4 py-2"
-                type="date"
-                placeholder="dob"
-                // value={searchDob}
-                // onChange={(e) => setSearchDob(e.target.value)}
-              />
-            </div>
-            <div className="p-1">
-              <span className="font-bold text-sm">Phone</span>
-              <input
-                className="w-full border border-gray-300 rounded-md px-4 py-2"
-                type="text"
-                placeholder="phone"
-                value={searchPhone}
-                onChange={(e) => setSearchPhone(e.target.value)}
-              />
+              <span className="font-bold text-sm">Phone Number</span>
+              <Form.Item name="phoneNumber">
+                <Input
+                  className="w-full border border-gray-300 rounded-md px-4 py-2"
+                  type="text"
+                />
+              </Form.Item>
             </div>
             <div className="p-1">
               <span className="font-bold text-sm">Address</span>
-              <input
-                className="w-full border border-gray-300 rounded-md px-4 py-2"
-                type="text"
-                placeholder="address"
-              />
+              <Form.Item name="address">
+                <Input
+                  className="w-full border border-gray-300 rounded-md px-4 py-2"
+                  type="text"
+                />
+              </Form.Item>
             </div>
-            <div className="flex justify-center mt-3 p-2">
+            <div className="flex justify-center">
               <button
-                className="bg-blue-600 text-white px-3 py-2 rounded-md mt-2"
+                className="bg-blue-600 text-white px-8 py-2 rounded-md"
                 type="submit"
               >
                 Search
@@ -195,32 +226,30 @@ const Users = () => {
             </div>
           </div>
         </div>
-      </form>
+      </Form>
 
-      <Button className="bg-blue-600 text-white rounded-md mt-3 float-right">
+      <Button className="bg-blue-600 text-white rounded-md my-3 float-right">
         <Link
-          to={`/admin/Add`}
+          to={`./create`}
           className="no-underline flex flex-col items-center"
         >
           <span>Thêm mới</span>
         </Link>
       </Button>
-      <br></br>
-      <br></br>
-      <br></br>
-      {users?.length > 0 && (
-        <Table
-          loading={loading}
-          columns={columns}
-          dataSource={users}
-          pagination={{
-            pageSize: users?.pageSize,
-            total: users?.totalCount,
-            onChange: onChangePage,
-          }}
-        />
-      )}
+      <Table
+        // style={{ height: "70vh" }}
+        loading={loading}
+        columns={columns}
+        dataSource={userData}
+        pagination={{
+          showTotal: (total, range) =>
+            `${range[0]}-${range[1]} of ${total} items`,
+          total: users?.totalCount,
+          defaultPageSize: pageSize,
+          onChange: onChangePage,
+        }}
+      />
     </div>
   );
 };
-export default Users;
+export default memo(Users);

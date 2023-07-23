@@ -1,11 +1,11 @@
 
-import React, { useEffect, useState } from "react";
-import { Formik, Field, Form, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
 import { Button } from 'antd';
-import { GetData, PutData } from "../../../../api";
+import { ErrorMessage, Field, Form, Formik } from 'formik';
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { format } from 'date-fns';
+import * as Yup from 'yup';
+import http from "../../../../http-common";
+import moment from 'moment';
 
 const Edit = () => {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const Edit = () => {
 
   const fetchData = async () => {
     try {
-      const response = await GetData(`/users/${userID}`);
+      const response = await http.get(`/users/${userID}`);
       setData(response.data);
       setIsLoading(false);
     } catch (error) {
@@ -32,8 +32,10 @@ const Edit = () => {
   };
 
   const handleSubmit = async (values) => {
+    console.log(values)
+    delete values.id;
     try {
-      const response = await PutData(`/users/${userID}`, values);
+      const response = await http.put(`/users/${userID}`, {...values, dob: moment(values.dob).format("yyyy-MM-DDT00:00:00")});
       if (!response == 200) {
         throw new Error('Failed to update data');
       }
@@ -41,35 +43,20 @@ const Edit = () => {
     } catch (error) {
       console.error('Error updating data:', error);
     }
-    navigate('/admin/products');
+    navigate('../');
   };
 
   if (isLoading) {
     return <div>Loading data...</div>;
   }
 
-  const initialData = {
-    username: data.username || "",
-    password: data.password || "",
-    fullname: data.fullname || "",
-    dob: data.dob || "",
-    role: data.role || 1,
-    department: data.department || 1,
-    email: data.email || "",
-    phone_number: data.phone_number || "",
-    gender: data.gender || 1,
-    address: data.address || "",
-    province: "hà nội",
-
-  };
 
   return (
     <Formik
-      initialValues={initialData}
+      initialValues={data}
       validationSchema={Yup.object().shape({
         fullname: Yup.string().required('Name is required'),
         username: Yup.string().required('Username is required'),
-        password: Yup.string().required('Password is required'),
         gender: Yup.string().required('Gender is required'),
         dob: Yup.string().required('Date of Birth is required'),
         phone_number: Yup.string().required('Phone number is required'),
@@ -78,14 +65,14 @@ const Edit = () => {
       })}
       onSubmit={handleSubmit}
     >
-      <Form className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700'>
+      <Form className='border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'>
         <div>
           <label htmlFor="fullname">Full Name:</label>
           <Field
             type="text"
             id="fullname"
             name="fullname"
-            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+            className='border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
           />
           <ErrorMessage name="fullname" className="text-danger" component="div" />
         </div>
@@ -95,19 +82,9 @@ const Edit = () => {
             type="text"
             id="username"
             name="username"
-            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+            className='border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
           />
           <ErrorMessage name="username" className="text-danger" component="div" />
-        </div>
-        <div>
-          <label htmlFor="password">Password:</label>
-          <Field
-            type="password"
-            id="password"
-            name="password"
-            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-          />
-          <ErrorMessage name="password" className="text-danger" component="div" />
         </div>
         <div>
           <label htmlFor="gender">Gender:</label>
@@ -115,7 +92,7 @@ const Edit = () => {
             as="select"
             id="gender"
             name="gender"
-            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+            className='border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
           >
             <option value="">Select</option>
             <option value="0">Nam</option>
@@ -129,7 +106,7 @@ const Edit = () => {
             type="date"
             id="dob"
             name="dob"
-            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+            className='border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
           />
           <ErrorMessage name="dob" className="text-danger" component="div" />
         </div>
@@ -139,7 +116,7 @@ const Edit = () => {
             type="text"
             id="phone_number"
             name="phone_number"
-            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+            className='border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
           />
           <ErrorMessage name="phone_number"className="text-danger" component="div" />
         </div>
@@ -149,7 +126,7 @@ const Edit = () => {
             type="email"
             id="email"
             name="email"
-            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+            className='border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
           />
           <ErrorMessage name="email" className="text-danger" component="div" />
         </div>
@@ -159,7 +136,7 @@ const Edit = () => {
             type="text"
             id="address"
             name="address"
-            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+            className='border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
           />
           <ErrorMessage name="address" className="text-danger" component="div" />
         </div>

@@ -37,15 +37,23 @@ const WorkingForm = ({ type, onSave }) => {
     dispatch(getWorkingDays({}));
   }, [dispatch]);
   const disabledDate = (currentDate) => {
-    return !currentDate && workingday.map(date => moment(date.date) !== moment(currentDate));
-  }
+    return (
+      !currentDate &&
+      workingday.map((date) => moment(date.date) !== moment(currentDate))
+    );
+  };
   return (
     <div
       style={{
         display: "flex",
       }}
     >
-      <div style={{ flex: 1, padding: "10px" }}>
+      <div
+        style={{
+          flex: 1,
+          marginTop: "4.5rem",
+        }}
+      >
         <Form
           form={formWorking}
           initialValues={initialValues}

@@ -1,11 +1,12 @@
 
+import { Button } from 'antd';
+import { ErrorMessage, Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from "react";
-import { Formik, Field, Form, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import { Button, Space } from 'antd';
-import { GetData, PostData } from '../../../../api';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
+import * as Yup from 'yup';
+import http from '../../../../http-common';
+import moment from 'moment';
 
 
 
@@ -42,8 +43,8 @@ const Add = () => {
   const handleSubmit = async (data, { resetForm }) => {
     // Perform the API call or any other logic to add the employee
     console.log('Submitted values:', data);
-    const result = await PostData("/users", { ...data, gender: Number(data.gender) });
-    navigate('/admin/products')
+    const result = await http.post("/users", { ...data, dob: moment(data.dob).format("yyyy-MM-DDT00:00:00"), gender: Number(data.gender) });
+    navigate('../')
     result.then((res) => console.log(res.data)).catch((err) => console.log(err.response.data))
     resetForm();
   };
@@ -52,7 +53,7 @@ const Add = () => {
   const [wards, setWards] = useState([]);
   useEffect(() => {
     // Gọi API để lấy danh sách tỉnh
-    GetData(`/provinces`)
+    http.get(`/provinces`)
       .then(data => {
         const formattedOptionsProvinces = data.data.map(option => ({
           value: option.id,
@@ -65,7 +66,7 @@ const Add = () => {
 
   const handleProvinceChange = id => {
     // Lấy danh sách huyện từ API dựa trên tỉnh đã chọn
-    GetData(`/province/${id}/districts`)
+    http.get(`/province/${id}/districts`)
       .then(response => {
         const formattedOptionsDistricts = response.data.map(option => ({
           value: option.id,
@@ -80,7 +81,7 @@ const Add = () => {
   // xã phường
   const handleDistrictChange = id => {
     // Lấy danh sách phường từ API dựa trên huyện đã chọn
-    GetData(``)
+    http.get(``)
       .then(response => {
         const formattedOptionsWards = response.data.map(option => ({
           value: option.id,
@@ -98,30 +99,30 @@ const Add = () => {
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
     >
-      <Form className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700'>
+      <Form className='border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'>
         <div>
           <label htmlFor="fullname">Full Name :</label>
-          <Field type="text" id="fullname" name="fullname" className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' />
+          <Field type="text" id="fullname" name="fullname" className='border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' />
           <ErrorMessage name="fullname" component="div" className="text-danger" />
         </div>
         <br></br>
         <div>
           <label htmlFor="username">User Name :</label>
-          <Field type="string" id="username" name="username" className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' />
+          <Field type="string" id="username" name="username" className='border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' />
           <ErrorMessage name="username" component="div" className="text-danger" />
         </div>
         <br></br>
 
         <div>
           <label htmlFor="password">Passeword:</label>
-          <Field type="string" id="password" name="password" className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' />
+          <Field type="string" id="password" name="password" className='border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' />
           <ErrorMessage name="password" component="div" className="text-danger" />
         </div>
         <br></br>
 
         <div>
           <label htmlFor="gender">Gender :</label>
-          <Field as="select" id="gender" name="gender" className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'>
+          <Field as="select" id="gender" name="gender" className='border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'>
             <option value="">Select</option>
             <option value="0">Nam</option>
             <option value="1">Nữ</option>
@@ -132,21 +133,21 @@ const Add = () => {
 
         <div>
           <label htmlFor="dob">DOB</label>
-          <Field type="date" name="dob" id="dob" className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' />
+          <Field type="date" name="dob" id="dob" className='border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' />
           <ErrorMessage name="dob" component="div" className="text-danger" />
         </div>
         <br></br>
 
         <div>
           <label htmlFor="phone_number">Phone :</label>
-          <Field type="string" id="phone_number" name="phone_number" className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' />
+          <Field type="string" id="phone_number" name="phone_number" className='border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' />
           <ErrorMessage name="phone_number" component="div" className="text-danger" />
         </div>
         <br></br>
 
         <div>
           <label htmlFor="email">Email :</label>
-          <Field type="email($email)" id="email" name="email" className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' />
+          <Field type="email($email)" id="email" name="email" className='border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' />
           <ErrorMessage name="email" component="div" className="text-danger" />
         </div>
         <br></br>
@@ -195,13 +196,11 @@ const Add = () => {
             type="text"
             id="address"
             name="address"
-            className='bg-gray-20 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+            className='bg-gray-20 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
           />
           <ErrorMessage name="address" component="div" className="text-danger" />
         </div>
 
-        <br></br>
-        <br></br>
         <Button type="primary" htmlType="submit" className='bg-primary'>Thêm Mới</Button>
 
       </Form>

@@ -33,13 +33,30 @@ export const HttpInterceptor = ({ children }) => {
   );
   instance.interceptors.response.use(
     function (response) {
-      return response;
+      if (
+        location.pathname.includes("auth") ||
+        location.pathname.includes("user-management") ||
+        location.pathname.includes("project-management") ||
+        location.pathname.includes("partner-management") ||
+        location.pathname.includes("working-management")
+      ) {
+        // if (
+        //   !location.pathname.includes("auth") &&
+        //   !location.pathname.includes("user-management") &&
+        //   !location.pathname.includes("project-management") &&
+        //   !location.pathname.includes("partner-management") &&
+        //   !location.pathname.includes("working-management")
+        // ) {
+        //   navigate("/404");
+        // }
+        return response;
+      }
     },
     function (error) {
       const { status, message, statusText } = error.response || {};
       if (status === 401) {
         dispatch(logout());
-        navigate("/login", { state: { from: location } });
+        navigate("/auth/login", { state: { from: location } });
       }
       if (status === 408 || status === 500 || status === 502) {
         toast.error(message || statusText, {
@@ -49,22 +66,22 @@ export const HttpInterceptor = ({ children }) => {
       return Promise.reject(error);
     }
   );
-//   useEffect(() => {
-//     const user = state?.user
-//       ? state?.user
-//       : localStorage.getItem("user") &&
-//         JSON.parse(localStorage.getItem("user"));
-//     if (user && user?.role === "FIN_STAFF") {
-//       if (
-//         location?.pathname.includes("/campaign-management") ||
-//         location?.pathname.includes("/customer-list") ||
-//         location?.pathname.includes("/spin")
-//       ) {
-//         navigate("/403");
-//       }
-//     }
-//     // request interceptor to add accessToken to request headers
-//   }, [location, navigate, signOut, state?.user]);
+  //   useEffect(() => {
+  //     const user = state?.user
+  //       ? state?.user
+  //       : localStorage.getItem("user") &&
+  //         JSON.parse(localStorage.getItem("user"));
+  //     if (user && user?.role === "FIN_STAFF") {
+  //       if (
+  //         location?.pathname.includes("/campaign-management") ||
+  //         location?.pathname.includes("/customer-list") ||
+  //         location?.pathname.includes("/spin")
+  //       ) {
+  //         navigate("/403");
+  //       }
+  //     }
+  //     // request interceptor to add accessToken to request headers
+  //   }, [location, navigate, signOut, state?.user]);
   return children;
 };
 
