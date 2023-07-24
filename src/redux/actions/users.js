@@ -20,18 +20,18 @@ export const getUsers = createAsyncThunk(
   }
 );
 
-export const postUsers = createAsyncThunk(
-  "post/users",
-  async (data, { rejectWithValue }) => {
-    try {
-      const { response } = await http.post(`/users`, data);
-      console.log(response);
-    } catch (error) {
-      if (error.response && error.response.data) {
-        return rejectWithValue(error.response.data);
-      } else {
-        rejectWithValue(error.message);
-      }
-    }
-  }
-);
+// export const postUsers = createAsyncThunk(
+//   "post/users",
+//   async (data, { rejectWithValue }) => {
+//     try {
+//       const { response } = await http.post(`/users`, data);
+//       console.log(response);
+//     } catch (error) {
+//       if (error.response && error.response.data) {
+//         return rejectWithValue(error.response.data);
+//       } else {
+//         rejectWithValue(error.message);
+//       }
+//     }
+//   }
+// );

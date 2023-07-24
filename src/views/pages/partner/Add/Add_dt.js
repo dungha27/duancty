@@ -3,9 +3,8 @@ import React from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button, Space } from 'antd';
-import { PostData } from '../../../../api';
 import { useNavigate } from 'react-router-dom';
-// import { PostData } from '../../../api';
+import http from '../../../../http-common';
 
 
 const validationSchema = Yup.object().shape({
@@ -17,7 +16,6 @@ const validationSchema = Yup.object().shape({
 
 const Add_dt = () => {
   const navigate = useNavigate()
-
   // Initial form values
   const initialData = {
     name: "",
@@ -28,8 +26,8 @@ const Add_dt = () => {
   const handleSubmit = async (data, { resetForm }) => {
     // Perform the API call or any other logic to add the employee
     console.log('Submitted values:', data);
-    const result = await PostData(`/partner`,{...data});
-    navigate('/admin/partner')
+    const result = await http.post(`/partner`,{...data});
+    navigate('../')
     result.then((res) => console.log(res.data)).catch((err) => console.log(err.response.data))
     resetForm();
   };

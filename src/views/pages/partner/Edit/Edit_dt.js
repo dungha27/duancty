@@ -2,24 +2,21 @@ import React, { useEffect, useState } from "react";
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button, Space } from 'antd';
-import { GetData, PutData } from "../../../../api";
+import http from '../../../../http-common';
 import { useLocation, useSearchParams } from "react-router-dom";
 import { parseISO, format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 
 const Edit = () => {
   const navigate = useNavigate();
-
   const initialData = {
     name: "",
     email: "",
     phoneNumber: "",
     address: "",
   };
-
   const [data, setData] = useState(initialData);
   const [isDataFetched, setIsDataFetched] = useState(false);
-
   const location = useLocation();
   const userID = location.pathname.split("/")[location.pathname.split("/").length - 1];
 
@@ -29,7 +26,7 @@ const Edit = () => {
 
   const fetchData = async () => {
     try {
-      const response = await GetData(`/partner/${userID}`);
+      const response = await http.get(`/partner/${userID}`);
       console.log('object', response.data);
       setData(response.data);
       setIsDataFetched(true);
@@ -40,7 +37,7 @@ const Edit = () => {
 
   const handleSubmit = async (values) => {
     try {
-      const response = await PutData(`/partner/${userID}`, values);
+      const response = await http.put(`/partner/${userID}`, values);
       if (!response == 200) {
         throw new Error('Failed to update data');
       }
@@ -48,9 +45,8 @@ const Edit = () => {
     } catch (error) {
       console.error('Error updating data:', error);
     }
-    navigate('/admin/Partner');
+    navigate('../');
   };
-
   return (
     <div>
       {isDataFetched ? (

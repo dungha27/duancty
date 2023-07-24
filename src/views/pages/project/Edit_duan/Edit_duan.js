@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Button, Space } from 'antd';
-import { GetData, PutData } from "../../../../api";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { parseISO, format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { CLSThresholds } from "web-vitals";
+import http from '../../../../http-common';
 
 const Edit = () => {
   const navigate = useNavigate();
@@ -24,21 +24,24 @@ const Edit = () => {
   const [isDataFetched, setIsDataFetched] = useState(false);
   const location = useLocation();
   const userID = location.pathname.split("/")[location.pathname.split("/").length - 1];
-
-  useEffect(() => {
-    const fetchMemberData = async () => {
-      const result = await GetData(`/partner`);
-      setPartnerList(result.data);
-    };
-    fetchMemberData();
-  }, []);
-
+ 
   useEffect(() => {
     fetchData();
+    fetchPartner();
   }, []);
+  //list partner
+  const fetchPartner = async () => {
+    try {
+      const response = await http.get(`/partner?page=0&size`);
+      setPartnerList(response.data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+  //list project
   const fetchData = async () => {
     try {
-      const response = await GetData(`/project/${userID}`);
+      const response = await http.get(`/project/${userID}`);
       console.log('object', response.data);
       setData(response.data);
       setIsDataFetched(true);
@@ -53,7 +56,7 @@ const Edit = () => {
         startDate: format(parseISO(values.startDate), 'yyyy-MM-dd'),
         endDate: format(parseISO(values.endDate), 'yyyy-MM-dd')
       };
-      const response = await PutData(`/project/${userID}`, formattedValues);
+      const response = await http.put(`/project/${userID}`, formattedValues);
       if (!response.ok) {
         throw new Error('Failed to update data');
       }
@@ -61,7 +64,7 @@ const Edit = () => {
     } catch (error) {
       console.error('Error updating data:', error);
     }
-    navigate('/admin/project');
+    navigate('../');
   };
 
   return (

@@ -28,7 +28,8 @@ import { logout } from '../../redux/state/auth/authSlice'
 const AppHeaderDropdown = () => {
   const dispatch = useDispatch();
   const handleLogout = () => {
-    dispatch(logout())
+    dispatch(logout());
+    window.location.reload();
   }
   return (
     <CDropdown variant="nav-item">
